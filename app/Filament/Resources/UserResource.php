@@ -24,7 +24,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('avatar_url')->label('avatar'),
+                Forms\Components\FileUpload::make('avatar_url')->avatar()->label('Avatar'),
                 Forms\Components\TextInput::make('name')
                 ->required(),
                 Forms\Components\TextInput::make('email')
@@ -32,12 +32,14 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')
                 ->password()
                 ->revealable()
-                ->required(),
+                ->dehydrated(fn ($state) => filled($state))
+                ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('role')
                 ->options([
                     'operator' => 'Operator',
                     'admin' => 'Admin',
                 ])
+                ->default('operator')
                 ->required(),
             ]);
     }
